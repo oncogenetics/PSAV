@@ -10,7 +10,7 @@ PSAV is made available under the MIT license.
 
 ### Required R Packages
 ```R
-install.packages("shiny","ggplot2","DT"), dependencies = TRUE)  
+install.packages(c("shiny","ggplot2","DT"), dependencies = TRUE)  
 ```
 
 ### Launch PSAV
