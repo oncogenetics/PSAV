@@ -1,7 +1,5 @@
 PSAV v0.2
 =========
-PSA Velocity shiny application
-
 
 ## Calculate PSA Velocity
 
