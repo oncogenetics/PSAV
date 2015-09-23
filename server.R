@@ -3,7 +3,7 @@ shinyServer(
     
     #if Clear pressed then clear the text box
     observe({
-      if (input$clearText_button == 0) return()
+      if (input$clearTextButton == 0) return()
       isolate({ updateTextInput(session, "PasteData", label = ",", value = "") })
     })
     
@@ -11,27 +11,31 @@ shinyServer(
     #Convert pasted text into a dataframe
     datPSA <- reactive({
       if(is.null(input$PasteData)) {return(NULL)}
-      mySep<-switch(input$fileSepP, '1'=",",'2'="\t",'3'=";")
+      
+      mySep <- switch(input$FieldSeparator,
+                      '1'=",",'2'="\t",'3'=";")
+      
       x <- matrix(strsplit(input$PasteData, "\n")[[1]])
-      x <- do.call(rbind,lapply(x,function(i){strsplit(i,mySep)[[1]]}))
+      
+      x <- do.call(rbind,
+                   lapply(x,function(i){
+                     strsplit(i,mySep)[[1]]}))
+      
       x <- data.frame(SampleID=x[,1],
-                      PSA_Date=x[,2],
-                      PSA=as.numeric(x[,3]),stringsAsFactors = FALSE)
+                      PSA_Date=as.Date(x[,2],"%d/%m/%Y"),
+                      PSA=as.numeric(x[,3]), stringsAsFactors = FALSE)
+      return(x)
     })
     
-    #Get results using udf_PSA_velocity function
-    datPSAResult <- reactive({udf_PSA_velocity(datPSA())})
+    #Get results using udf_PSAV function
+    datPSAResult <- reactive({udf_PSAV(datPSA())})
     
     #Show input data as table on "Input Data" tab
-    output$PSAV <- renderTable({
-      datPSA()
-    })
+    output$PSAV <- renderDataTable({ datPSA() })
     
     #Result Tab --------------------------------------------------------------
     #Output for "Result" tab
-    output$PSAV_result <- renderTable({
-      datPSAResult()
-    }, digits=4)
+    output$PSAV_result <- renderDataTable({ datPSAResult() })
     
     #Option to download Results
     output$downloadResult <- downloadHandler(
@@ -44,28 +48,44 @@ shinyServer(
     #Plot Tab --------------------------------------------------------------
     #Dynamic input - Select Sample for plot
     output$SampleID <- renderUI({
-      selectInput("SampleID", strong("Sample ID:"),
+      selectInput("SampleID", h4("Sample ID:"),
                   choices = sort(unique(datPSA()$SampleID)))
-    })
+      })
     
-    ##plot for selected sample
+    # Plot for selected sample
     output$SamplePlot <- renderPlot({
       d <- datPSA()[ datPSA()$SampleID == input$SampleID,]
-      d$PSA_Date <- as.Date(d$PSA_Date,"%d/%m/%Y")
       d$FirstLast <- ifelse(d$PSA_Date %in% c(min(d$PSA_Date,na.rm=TRUE),
                                               max(d$PSA_Date,na.rm=TRUE)),1,0)
       ggplot(d,
              aes(x=PSA_Date,y=PSA)) +
         geom_point() +
-        geom_line(colour="green") +
-        geom_smooth(method=lm,se=FALSE) +
-        geom_line(data=d[ d$FirstLast==1,], aes(x=PSA_Date,y=PSA),col="red") +
+        geom_line(colour="#A71930") +
+        geom_smooth(method=lm,se=FALSE,col="#726E20") +
+        geom_line(data=d[ d$FirstLast==1,], aes(x=PSA_Date,y=PSA),col="#003D4C") +
+        xlab("PSA Date") +
         theme_classic()
       
     })
-    output$PSAV_result_selected <- renderTable({
-      datPSAResult()[datPSAResult()$SampleID==input$SampleID,]
-    }, digits=4)
+    
+    #Pretty output for a selected sample
+    output$PSAVResultSelected <- renderDataTable({
+      datPSAResult()[datPSAResult()$SampleID==input$SampleID, 2:5] %>% 
+        datatable(filter = "none",
+                  rownames = FALSE,
+                  colnames = c("PSA Count" = 1,
+                               "Arithmetic equation (AE)" = 2,
+                               "Linear regression (LR)" = 3,
+                               "First and last (FL)" = 4),
+                  options=list(dom = 't',
+                               sort = FALSE,
+                               paging = FALSE, 
+                               searching = FALSE, 
+                               searchable = FALSE)) %>% 
+        formatStyle("Arithmetic equation (AE)", backgroundColor="#E23C57") %>% 
+        formatStyle("Linear regression (LR)", backgroundColor="#AFA931") %>% 
+        formatStyle("First and last (FL)", backgroundColor="#0083A3")
+      })
     
     
   }

@@ -1,4 +1,4 @@
-udf_PSA_velocity <- function(dat) {
+udf_PSAV <- function(dat) {
   # About -------------------------------------------------------------------
   # Date: 30/05/2014
   # Calculate PSA Velocity 3 methods:
@@ -36,7 +36,7 @@ udf_PSA_velocity <- function(dat) {
             lapply(dat,function(ind){
               #ind=as.data.frame(dat[[3]])
               d <- data.frame(SampleID=ind[,1],
-                              PSADate=as.Date(ind[,2],"%d/%m/%Y"),
+                              PSADate=ind[,2],
                               PSA=ind[,3])
               #sort by date
               d <- d[order(d$PSADate),]
