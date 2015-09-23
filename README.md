@@ -13,14 +13,15 @@ PSAV is made available under the MIT license.
 install.packages(c("shiny","ggplot2","DT"), dependencies = TRUE)  
 ```
 
-### Launch PSAV
+### Launch PSAV   
+#### Using R console   
 To start PSAV, open R (RStudio recommended), copy the following code into the console and hit Return:
 ```R
 library(shiny)  
 runGitHub("PSAV", "oncogenetics")
 ```
 
-### Older version available at
+#### Online shinyapps.io
 https://zx8754.shinyapps.io/PSA_Velocity/
 
 ### Contact  
