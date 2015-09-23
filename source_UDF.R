@@ -19,10 +19,6 @@ udf_PSAV <- function(dat) {
   # Sample_2 08/05/2009 2.8
   # Sample_2 07/04/2010 3.3
   
-  # Workspace ---------------------------------------------------------------
-  #setwd("C:/Users/tdadaev/Desktop/Projects/Impact/PSAvelocity/R")
-  date_prefix <- substr(Sys.time(),1,10)
-  
   # Data prep ---------------------------------------------------------------
   #exclude samples with no PSA
   dat <- dat[ !is.na(dat$PSA),]
@@ -83,5 +79,4 @@ udf_PSAV <- function(dat) {
   # Return PSA Velocity -----------------------------------------------------
   rownames(PSAV) <- NULL
   return(PSAV)
-  
 }
