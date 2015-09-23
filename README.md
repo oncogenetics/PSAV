@@ -22,3 +22,13 @@ runGitHub("PSAV", "oncogenetics")
 
 ### Older version available at
 https://zx8754.shinyapps.io/PSA_Velocity/
+
+### Contact  
+Questions, suggestions, and bug reports are welcome and appreciated.   
+- Submit [suggestions and bug-reports](https://github.com/oncogenetics/PSAV/issues)   
+- Send [pull request](https://github.com/oncogenetics/PSAV/pulls)   
+- Contact email [T Dadaev](mailto: tokhir.dadaev@icr.ac.uk)   
+
+### To-do List
+https://github.com/oncogenetics/PSAV/issues   
+
