@@ -10,7 +10,8 @@ shinyServer(
     #Input Data Tab --------------------------------------------------------------
     #Convert pasted text into a dataframe
     datPSA <- reactive({
-      if(is.null(input$PasteData)) {return(NULL)}
+      if(is.null(input$PasteData) |
+         input$PasteData=="") {return(NULL)}
       
       mySep <- switch(input$FieldSeparator,
                       '1'=",",'2'="\t",'3'=";")
@@ -48,7 +49,7 @@ shinyServer(
     #Plot Tab --------------------------------------------------------------
     #Dynamic input - Select Sample for plot
     output$SampleID <- renderUI({
-      selectInput("SampleID", h4("Sample ID:"),
+      selectInput("SampleID", h4("Select sample ID:"),
                   choices = sort(unique(datPSA()$SampleID)))
       })
     
@@ -64,6 +65,7 @@ shinyServer(
         geom_smooth(method=lm,se=FALSE,col="#726E20") +
         geom_line(data=d[ d$FirstLast==1,], aes(x=PSA_Date,y=PSA),col="#003D4C") +
         xlab("PSA Date") +
+        ggtitle(input$SampleID) +
         theme_classic()
       
     })
@@ -82,9 +84,9 @@ shinyServer(
                                paging = FALSE, 
                                searching = FALSE, 
                                searchable = FALSE)) %>% 
-        formatStyle("Arithmetic equation (AE)", backgroundColor="#E23C57") %>% 
-        formatStyle("Linear regression (LR)", backgroundColor="#AFA931") %>% 
-        formatStyle("First and last (FL)", backgroundColor="#0083A3")
+        formatStyle("Linear regression (LR)", backgroundColor="#C9DD03") 
+        #formatStyle("Arithmetic equation (AE)", backgroundColor="#E23C57") %>% 
+        #formatStyle("First and last (FL)", backgroundColor="#0083A3")
       })
     
     
